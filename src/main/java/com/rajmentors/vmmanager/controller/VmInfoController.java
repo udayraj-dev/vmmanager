@@ -6,19 +6,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rajmentors.vmmanager.model.SshLoginRecord;
-import com.rajmentors.vmmanager.model.VmInfo;
-import com.rajmentors.vmmanager.service.VMInfoService;
+import com.rajmentors.vmmanager.model.InstanceRecord;
+import com.rajmentors.vmmanager.model.LoginRecord;
+import com.rajmentors.vmmanager.service.InstanceService;
 
 @RestController
-@RequestMapping("/vm")
+@RequestMapping("/instance")
 public class VmInfoController {
     @Autowired
-    VMInfoService vmInfoService;
+    InstanceService vmInfoService;
 
     @PostMapping("/info")
-    public VmInfo getVMInfo(@RequestBody SshLoginRecord sshLoginRecord) {
-        return vmInfoService.getVMInfo(sshLoginRecord);
+    public InstanceRecord getInstanceInformation(@RequestBody LoginRecord sshLoginRecord) {
+        return vmInfoService.getInstanceInformation(sshLoginRecord);
     }
 
 }

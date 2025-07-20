@@ -1,6 +1,6 @@
 package com.rajmentors.vmmanager.model;
 
-public record VmInfo(
+public record InstanceRecord(
     String osName,
     String hostName,
     String cpuCores,

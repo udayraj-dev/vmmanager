@@ -15,16 +15,16 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.rajmentors.vmmanager.model.SshLoginRecord;
+import com.rajmentors.vmmanager.model.LoginRecord;
 
-public class SshHost {
+public class SshInfoUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(SshHost.class);
-    private SshLoginRecord sshLoginRecord;
+    private static final Logger logger = LoggerFactory.getLogger(SshInfoUtil.class);
+    private LoginRecord sshLoginRecord;
     private final int sessionTimeout;
     private final int channelTimeout;
 
-    public SshHost(SshLoginRecord sshLoginRecord, int sessionTimeout, int channelTimeout) {
+    public SshInfoUtil(LoginRecord sshLoginRecord, int sessionTimeout, int channelTimeout) {
         this.sshLoginRecord = sshLoginRecord;
         this.sessionTimeout = sessionTimeout;
         this.channelTimeout = channelTimeout;
