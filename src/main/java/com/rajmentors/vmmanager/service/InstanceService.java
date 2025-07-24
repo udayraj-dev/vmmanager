@@ -23,7 +23,7 @@ public class InstanceService {
     @Value("${ssh.channelTimeout:15000}")
     private int channelTimeout;
 
-    public InstanceRecord getInstanceInformation(LoginRecord loginRecord) {
+    public InstanceRecord getInformation(LoginRecord loginRecord) {
         SshInfoUtil sshInfo = new SshInfoUtil(loginRecord, sessionTimeout, channelTimeout);
         InstanceRecord instance = null;
         try {
@@ -33,7 +33,7 @@ public class InstanceService {
                     sshInfo.getCpuCores(),
                     sshInfo.getRootPartitionSize(),
                     sshInfo.getTotalRamSize(),
-                    sshInfo.getMacAddress("enp1s0")); // Note: Interface name is hardcoded
+                    sshInfo.getMacAddress("ens3"));
         } catch (JSchException | IOException e) {
             logger.error("Error getting VM information for host {}:{}", loginRecord.ipAddress(),
                     loginRecord.portNumber(), e);

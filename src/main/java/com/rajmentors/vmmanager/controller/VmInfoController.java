@@ -14,11 +14,11 @@ import com.rajmentors.vmmanager.service.InstanceService;
 @RequestMapping("/instance")
 public class VmInfoController {
     @Autowired
-    InstanceService vmInfoService;
+    InstanceService instanceService;
 
     @PostMapping("/info")
-    public InstanceRecord getInstanceInformation(@RequestBody LoginRecord sshLoginRecord) {
-        return vmInfoService.getInstanceInformation(sshLoginRecord);
+    public InstanceRecord getInformation(@RequestBody LoginRecord sshLoginRecord) {
+        return instanceService.getInformation(sshLoginRecord);
     }
 
 }
