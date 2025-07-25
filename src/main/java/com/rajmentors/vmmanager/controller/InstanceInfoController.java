@@ -12,7 +12,7 @@ import com.rajmentors.vmmanager.service.InstanceService;
 
 @RestController
 @RequestMapping("/instance")
-public class VmInfoController {
+public class InstanceInfoController {
     @Autowired
     InstanceService instanceService;
 
@@ -20,5 +20,4 @@ public class VmInfoController {
     public InstanceRecord getInformation(@RequestBody LoginRecord sshLoginRecord) {
         return instanceService.getInformation(sshLoginRecord);
     }
-
 }

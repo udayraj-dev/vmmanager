@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.jcraft.jsch.JSchException;
 import com.rajmentors.vmmanager.model.InstanceRecord;
 import com.rajmentors.vmmanager.model.LoginRecord;
-import com.rajmentors.vmmanager.util.SshInfoUtil;
+import com.rajmentors.vmmanager.util.SshUtil;
 
 @Service
 public class InstanceService {
@@ -24,21 +24,13 @@ public class InstanceService {
     private int channelTimeout;
 
     public InstanceRecord getInformation(LoginRecord loginRecord) {
-        SshInfoUtil sshInfo = new SshInfoUtil(loginRecord, sessionTimeout, channelTimeout);
+        SshUtil sshInfo = new SshUtil(loginRecord, sessionTimeout, channelTimeout);
         InstanceRecord instance = null;
         try {
-            instance = new InstanceRecord(
-                    sshInfo.getOsNameAndVersion(),
-                    sshInfo.getHostname(),
-                    sshInfo.getCpuCores(),
-                    sshInfo.getRootPartitionSize(),
-                    sshInfo.getTotalRamSize(),
-                    sshInfo.getMacAddress("ens3"));
+            instance = sshInfo.getInstanceInformation();
         } catch (JSchException | IOException e) {
             logger.error("Error getting VM information for host {}:{}", loginRecord.ipAddress(),
                     loginRecord.portNumber(), e);
-            // Consider re-throwing a custom exception to be handled by a global exception
-            // handler.
         }
         return instance;
     }
