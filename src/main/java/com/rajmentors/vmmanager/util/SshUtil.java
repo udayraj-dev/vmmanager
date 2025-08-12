@@ -23,6 +23,7 @@ public class SshUtil {
     private LoginRecord sshLoginRecord;
     private final int sessionTimeout;
     private final int channelTimeout;
+    private Session session;
 
     public SshUtil(LoginRecord sshLoginRecord, int sessionTimeout, int channelTimeout) {
         this.sshLoginRecord = sshLoginRecord;
@@ -30,25 +31,41 @@ public class SshUtil {
         this.channelTimeout = channelTimeout;
     }
 
-    private List<String> executeCommand(String command) throws JSchException, IOException {
-        Session session = null;
+    public void connect() throws JSchException {
+        if (session != null && session.isConnected()) {
+            logger.info("SSH Session is already connected.");
+            return;
+        }
+        JSch jsch = new JSch();
+        session = jsch.getSession(sshLoginRecord.username(), sshLoginRecord.ipAddress(),
+                sshLoginRecord.portNumber());
+        session.setPassword(sshLoginRecord.password());
+
+        Properties config = new Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+
+        logger.info("Connecting to SSH server at {}:{}...", sshLoginRecord.ipAddress(),
+                sshLoginRecord.portNumber());
+        session.connect(sessionTimeout);
+        logger.info("SSH Session established.");
+    }
+
+    public void disconnect() {
+        if (session != null && session.isConnected()) {
+            session.disconnect();
+            logger.info("SSH Session disconnected.");
+        }
+        session = null;
+    }
+
+    public List<String> executeCommand(String command) throws JSchException, IOException {
+        if (session == null || !session.isConnected()) {
+            throw new IllegalStateException("SSH session is not connected. Please call connect() first.");
+        }
         ChannelExec channel = null;
         List<String> outputLines = new ArrayList<>();
         try {
-            JSch jsch = new JSch();
-            session = jsch.getSession(sshLoginRecord.username(), sshLoginRecord.ipAddress(),
-                    sshLoginRecord.portNumber());
-            session.setPassword(sshLoginRecord.password());
-
-            Properties config = new Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
-
-            logger.info("Connecting to SSH server at {}:{}...", sshLoginRecord.ipAddress(),
-                    sshLoginRecord.portNumber());
-            session.connect(sessionTimeout);
-            logger.info("SSH Session established.");
-
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(command);
             InputStream commandOutput = channel.getInputStream();
@@ -66,7 +83,7 @@ public class SshUtil {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    // Ignore
+                    Thread.currentThread().interrupt();
                 }
             }
 
@@ -89,10 +106,6 @@ public class SshUtil {
                 channel.disconnect();
                 logger.info("SSH Channel disconnected.");
             }
-            if (session != null) {
-                session.disconnect();
-                logger.info("SSH Session disconnected.");
-            }
         }
         return outputLines;
     }
@@ -106,8 +119,9 @@ public class SshUtil {
                 "echo -n 'TOTAL_RAM:' && free -h --si | grep Mem: | awk '{print $2}'",
                 "echo -n 'MAC_ADDRESS:' && ip link show | grep 'link/ether' | awk '{print $2}' | head -1");
 
+        connect();
         List<String> output = executeCommand(compoundCommand);
-
+        disconnect();
         String osName = "", hostName = "", cpuCores = "", rootPartitionSize = "", totalRamSize = "", macAddress = "";
 
         for (String line : output) {
