@@ -1,4 +1,4 @@
-package com.rajmentors.vmmanager;
+package me.udayraj.vmmanager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

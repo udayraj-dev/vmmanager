@@ -1,4 +1,4 @@
-package com.rajmentors.vmmanager.util;
+package me.udayraj.vmmanager.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import jakarta.annotation.sql.DataSourceDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,18 +16,18 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.rajmentors.vmmanager.model.InstanceRecord;
-import com.rajmentors.vmmanager.model.LoginRecord;
+import me.udayraj.vmmanager.dto.VMInformation;
+import me.udayraj.vmmanager.model.SshLogin;
 
 public class SshUtil {
     private static final Logger logger = LoggerFactory.getLogger(SshUtil.class);
-    private LoginRecord sshLoginRecord;
+    private final SshLogin sshSshLogin;
     private final int sessionTimeout;
     private final int channelTimeout;
     private Session session;
 
-    public SshUtil(LoginRecord sshLoginRecord, int sessionTimeout, int channelTimeout) {
-        this.sshLoginRecord = sshLoginRecord;
+    public SshUtil(SshLogin sshLogin, int sessionTimeout, int channelTimeout) {
+        this.sshSshLogin = sshLogin;
         this.sessionTimeout = sessionTimeout;
         this.channelTimeout = channelTimeout;
     }
@@ -37,16 +38,16 @@ public class SshUtil {
             return;
         }
         JSch jsch = new JSch();
-        session = jsch.getSession(sshLoginRecord.username(), sshLoginRecord.ipAddress(),
-                sshLoginRecord.portNumber());
-        session.setPassword(sshLoginRecord.password());
+        session = jsch.getSession(sshSshLogin.username(), sshSshLogin.ipAddress(),
+                sshSshLogin.portNumber());
+        session.setPassword(sshSshLogin.password());
 
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
         session.setConfig(config);
 
-        logger.info("Connecting to SSH server at {}:{}...", sshLoginRecord.ipAddress(),
-                sshLoginRecord.portNumber());
+        logger.info("Connecting to SSH server at {}:{}...", sshSshLogin.ipAddress(),
+                sshSshLogin.portNumber());
         session.connect(sessionTimeout);
         logger.info("SSH Session established.");
     }
@@ -97,9 +98,9 @@ public class SshUtil {
                 while ((errorLine = errorReader.readLine()) != null) {
                     errorOutput.append(errorLine).append("\n");
                 }
-                logger.error("Command '{}' failed with error:\n{}", command, errorOutput.toString());
+                logger.error("Command '{}' failed with error:\n{}", command, errorOutput);
                 throw new IOException("Remote command failed: " + command + ", Exit status: " + exitStatus + ", Error: "
-                        + errorOutput.toString());
+                        + errorOutput);
             }
         } finally {
             if (channel != null) {
@@ -110,7 +111,7 @@ public class SshUtil {
         return outputLines;
     }
 
-    public InstanceRecord getInstanceInformation() throws JSchException, IOException {
+    public VMInformation getInstanceInformation() throws JSchException, IOException {
         String compoundCommand = String.join(" && ",
                 "echo 'OS_NAME:' && cat /etc/os-release | grep '^NAME='",
                 "echo -n 'HOSTNAME:' && hostname -f",
@@ -128,7 +129,7 @@ public class SshUtil {
             if (line.startsWith("NAME=")) {
                 osName = line.substring(line.indexOf("=") + 1).replace("\"", "");
             } else if (line.startsWith("HOSTNAME:")) {
-                hostName = line.replace("HOSTNAME:", "").trim();
+                hostName = line.replace("HOSTNAME:", "").trim().toLowerCase();
             } else if (line.startsWith("CPU_CORES:")) {
                 cpuCores = line.replace("CPU_CORES:", "").trim();
             } else if (line.startsWith("ROOT_PARTITION:")) {
@@ -140,7 +141,7 @@ public class SshUtil {
             }
         }
 
-        return new InstanceRecord(osName, hostName, cpuCores, rootPartitionSize, totalRamSize, macAddress);
+        return VMInformation.createWithSshDetails (sshSshLogin,osName, hostName, cpuCores, rootPartitionSize, totalRamSize, macAddress);
     }
 
     public void createFolderStructure(String parentFolder, String folders) throws JSchException, IOException {

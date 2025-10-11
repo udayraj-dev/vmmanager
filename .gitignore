@@ -32,3 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
+vmdb.mv.db
+.gitignore
+vmmanager.db

@@ -1,6 +1,6 @@
-package com.rajmentors.vmmanager.model;
+package me.udayraj.vmmanager.model;
 
-public record LoginRecord(
+public record SshLogin(
         String ipAddress,
         int portNumber,
         String username,

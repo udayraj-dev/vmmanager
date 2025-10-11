@@ -1,4 +1,4 @@
-package com.rajmentors.vmmanager.controller;
+package me.udayraj.vmmanager.controller;
 import java.io.File;
 
 public interface MetadataController {
