@@ -2,8 +2,8 @@ package me.udayraj.vmmanager.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
@@ -11,11 +11,7 @@ import java.util.UUID;
 public class VmInfo {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String ipAddress;
     private int portNumber;
