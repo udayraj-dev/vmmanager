@@ -1,72 +1,88 @@
-# vmmanager
+# Virtual Machine Manager
 
-Manage, start and stop your VMs
+A Spring Boot application to manage, start, and stop your Virtual Machines.
 
 ## Technologies Used
 
-* Java 21
-* Spring Boot
-* Maven
+* **Java:** 21
+* **Framework:** Spring Boot 3
+* **Build Tool:** Maven
+* **Database:** H2 (default), SQLite
+* **SSH:** JCraft (jsch)
+* **API Documentation:** SpringDoc OpenAPI (Swagger UI)
 
 ## Getting Started
 
-To get started with this project, you will need to have Java 21 and Maven installed.
+### Prerequisites
 
-1. Clone the repository:
+* Java 21
+* Maven
 
-```bash
-git clone https://github.com/udayraj123/vmmanager.git
-```
+### Installation
 
-2. Build the project:
+1. **Clone the repository:**
 
-```bash
-mvn clean install
-```
+    ```bash
+    git clone https://github.com/udayraj123/vmmanager.git
+    ```
 
-3. Run the application:
+2. **Build the project:**
 
-```bash
-java -jar target/vmmanager-0.0.1-SNAPSHOT.war
-```
+    ```bash
+    mvn clean install
+    ```
+
+3. **Run the application:**
+
+    ```bash
+    java -jar target/vmmanager-0.0.1-SNAPSHOT.war
+    ```
+
+## API Documentation
+
+API documentation is available through Swagger UI at:
+
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 ## API Endpoints
 
-### Test VM SSH Connection
+The base URL for all endpoints is `/vms`.
+
+| Method | Endpoint                | Description                                                                 |
+| :----- | :---------------------- | :-------------------------------------------------------------------------- |
+| `POST` | `/test-connection`      | Test SSH connection and retrieve VM details.                                |
+| `POST` | `/`                     | Save a new VM's information.                                                |
+| `PUT`  | `/{id}`                 | Update an existing VM.                                                      |
+| `DELETE`| `/{id}`                 | Soft-delete a VM.                                                           |
+| `GET`  | `/`                     | Find VMs by various filter criteria (e.g., status, owner).                  |
+| `GET`  | `/{id}`                 | Get a single VM by its ID.                                                  |
+
+### Example: Test VM SSH Connection
 
 * **URL:** `/vms/test-connection`
 * **Method:** `POST`
 * **Request Body:**
 
-```json
-{
-    "ipAddress": "your_vm_ip",
-    "portNumber": 22,
-    "username": "your_username",
-    "password": "your_password"
-}
-```
+    ```json
+    {
+        "ipAddress": "your_vm_ip",
+        "portNumber": 22,
+        "username": "your_username",
+        "password": "your_password"
+    }
+    ```
 
-* **Success Response:**
-  * **Code:** 200
-  * **Content:**
+## Database Configuration
 
-```json
-{
-    "id": "a7a7a7a7-a7a7-a7a7-a7a7-a7a7a7a7a7a7",
-    "ipAddress": "your_vm_ip",
-    "portNumber": 22,
-    "username": "your_username",
-    "password": "your_password",
-    "osName": "Ubuntu",
-    "hostName": "ubuntu-vm",
-    "cpuCores": "4",
-    "rootPartitionSize": "50G",
-    "totalRamSize": "8G",
-    "macAddress": "00:11:22:33:44:55"
-}
-```
+This application uses a file-based database. You can switch between H2 and SQLite by activating the corresponding Spring profile.
+
+* **H2 (default):** No configuration needed. The database is stored in memory.
+* **SQLite:** To use SQLite, set the following Spring profile:
+
+    ```
+    spring.profiles.active=sqlite
+    ```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License.
