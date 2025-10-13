@@ -43,7 +43,7 @@ public class VMInfoController {
     }
 
     @Operation(summary = "Save a new VM's information", description = "Saves the details of a new VM to the database. The ID is auto-generated.")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<VMInformation> save(@Valid @RequestBody VMInformation vmInformation) {
         VmInfo savedVmInfo = vmService.saveVmInfo(vmInformation);
         VMInformation responseDto = convertToDto(savedVmInfo);
@@ -71,7 +71,7 @@ public class VMInfoController {
     }
 
     @Operation(summary = "Find VMs by criteria", description = "Finds and paginates VMs based on a flexible set of filter criteria (e.g., status, ownerName, ipAddress).")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Page<VMInformation>> findVms(VmFilterCriteria filters, Pageable pageable) {
         Page<VmInfo> vmPage = vmService.findVmsByCriteria(filters, pageable);
         return ResponseEntity.ok(vmPage.map(this::convertToDto));
