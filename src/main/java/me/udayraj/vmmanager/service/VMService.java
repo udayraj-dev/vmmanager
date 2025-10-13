@@ -126,9 +126,9 @@ public class VMService {
     }
 
     private <T> Specification<VmInfo> addSpec(Specification<VmInfo> spec, T value, java.util.function.Function<T, Specification<VmInfo>> specFunction) {
-        if (value != null && (!(value instanceof String) || !((String) value).isBlank())) {
-            return spec.and(specFunction.apply(value));
+        if (value instanceof String stringValue && stringValue.isBlank()) {
+            return spec;
         }
-        return spec;
+        return value != null ? spec.and(specFunction.apply(value)) : spec;
     }
 }
