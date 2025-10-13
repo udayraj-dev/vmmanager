@@ -34,7 +34,7 @@ java -jar target/vmmanager-0.0.1-SNAPSHOT.war
 
 ### Test VM SSH Connection
 
-* **URL:** `/vm/test-connection`
+* **URL:** `/vms/test-connection`
 * **Method:** `POST`
 * **Request Body:**
 
