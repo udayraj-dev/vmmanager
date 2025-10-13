@@ -2,26 +2,26 @@ package me.udayraj.vmmanager.service;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Map;
-
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import com.jcraft.jsch.JSchException;
 
 import me.udayraj.vmmanager.dto.VMInformation;
+import me.udayraj.vmmanager.dto.VmFilterCriteria;
 import me.udayraj.vmmanager.exception.VmConnectionException;
 import me.udayraj.vmmanager.exception.VmPersistenceException;
 import me.udayraj.vmmanager.model.SshLogin;
 import me.udayraj.vmmanager.model.VmInfo;
 import me.udayraj.vmmanager.model.VmStatus;
-import me.udayraj.vmmanager.repository.VmInfoSpecifications;
 import me.udayraj.vmmanager.repository.VmInfoRepository;
+import me.udayraj.vmmanager.repository.VmInfoSpecifications;
 import me.udayraj.vmmanager.util.SshUtil;
 
 @Service
@@ -102,35 +102,19 @@ public class VMService {
         }
     }
 
-    public Page<VmInfo> findVmsByCriteria(Map<String, String> filters, Pageable pageable) {
+    public Page<VmInfo> findVmsByCriteria(VmFilterCriteria filters, Pageable pageable) {
         Specification<VmInfo> spec = Specification.allOf();
 
-        if (filters.containsKey("status")) {
-            spec = spec.and(VmInfoSpecifications.withStatus(VmStatus.valueOf(filters.get("status").toUpperCase())));
-        }
-        if (filters.containsKey("isLinux")) {
-            spec = spec.and(VmInfoSpecifications.isLinux(Boolean.parseBoolean(filters.get("isLinux"))));
-        }
-        if (filters.containsKey("ownerName")) {
-            spec = spec.and(VmInfoSpecifications.hasOwnerName(filters.get("ownerName")));
-        }
-        if (filters.containsKey("category")) {
-            spec = spec.and(VmInfoSpecifications.hasCategory(filters.get("category")));
-        }
-        if (filters.containsKey("purpose")) {
-            spec = spec.and(VmInfoSpecifications.hasPurpose(filters.get("purpose")));
-        }
-        if (filters.containsKey("hostName")) {
-            spec = spec.and(VmInfoSpecifications.hasHostName(filters.get("hostName")));
-        }
-        if (filters.containsKey("cpuCores")) {
-            spec = spec.and(VmInfoSpecifications.hasCpuCores(filters.get("cpuCores")));
-        }
-        if (filters.containsKey("totalRamSize")) {
-            spec = spec.and(VmInfoSpecifications.hasTotalRamSize(filters.get("totalRamSize")));
-        }
-        if (filters.containsKey("ipAddress")) {
-            spec = spec.and(VmInfoSpecifications.hasIpAddress(filters.get("ipAddress")));
+        if (filters != null) {
+            spec = addSpec(spec, filters.status(), VmInfoSpecifications::withStatus);
+            spec = addSpec(spec, filters.isLinux(), VmInfoSpecifications::isLinux);
+            spec = addSpec(spec, filters.ownerName(), VmInfoSpecifications::hasOwnerName);
+            spec = addSpec(spec, filters.category(), VmInfoSpecifications::hasCategory);
+            spec = addSpec(spec, filters.purpose(), VmInfoSpecifications::hasPurpose);
+            spec = addSpec(spec, filters.hostName(), VmInfoSpecifications::hasHostName);
+            spec = addSpec(spec, filters.cpuCores(), VmInfoSpecifications::hasCpuCores);
+            spec = addSpec(spec, filters.totalRamSize(), VmInfoSpecifications::hasTotalRamSize);
+            spec = addSpec(spec, filters.ipAddress(), VmInfoSpecifications::hasIpAddress);
         }
 
         try {
@@ -139,5 +123,12 @@ public class VMService {
             String message = messageService.getMessage("error.persistence.retrieve.criteria");
             throw new VmPersistenceException(message, e);
         }
+    }
+
+    private <T> Specification<VmInfo> addSpec(Specification<VmInfo> spec, T value, java.util.function.Function<T, Specification<VmInfo>> specFunction) {
+        if (value != null && (!(value instanceof String) || !((String) value).isBlank())) {
+            return spec.and(specFunction.apply(value));
+        }
+        return spec;
     }
 }

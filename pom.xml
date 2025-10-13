@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot Parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -22,34 +21,40 @@
     <description>Manage, start and stop your VMs</description>
 
     <properties>
-        </properties>
+        <java.version>21</java.version>
+    </properties>
 
     <dependencies>
-        <!-- Core Spring Boot Web Application -->
+        <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Jakarta Bean Validation (via Hibernate Validator) -->
+        <!-- For Jakarta Bean Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Actuator for monitoring -->
+        <!-- OpenAPI 3 and Swagger UI for API documentation -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- H2 Database (runtime only) -->
+        <!-- H2 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -63,21 +68,21 @@
             <version>3.43.0.0</version>
         </dependency>
 
-        <!-- Hibernate Dialect Support for SQLite -->
+        <!-- Hibernate Community Dialects for SQLite -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>
             <version>6.4.2.Final</version>
         </dependency>
 
-        <!-- SSH Support -->
+        <!-- SSH Library -->
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
             <version>0.1.55</version>
         </dependency>
 
-        <!-- DevTools for hot reload (optional) -->
+        <!-- DevTools (Optional for Hot Reload) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -92,7 +97,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Provided Tomcat for WAR packaging -->
+        <!-- Provided Tomcat (for WAR packaging) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -108,7 +113,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Compiler Plugin -->
+            <!-- Compiler Plugin using Toolchain -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
@@ -132,7 +137,7 @@
                 <configuration>
                     <toolchains>
                         <jdk>
-                            <version>21</version>
+                            <version>${java.version}</version>
                         </jdk>
                     </toolchains>
                 </configuration>
