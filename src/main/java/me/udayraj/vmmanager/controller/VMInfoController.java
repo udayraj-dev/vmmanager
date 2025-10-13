@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 
 import me.udayraj.vmmanager.dto.VmFilterCriteria;
 import me.udayraj.vmmanager.dto.VMInformation;
@@ -72,7 +73,7 @@ public class VMInfoController {
 
     @Operation(summary = "Find VMs by criteria", description = "Finds and paginates VMs based on a flexible set of filter criteria (e.g., status, ownerName, ipAddress).")
     @GetMapping
-    public ResponseEntity<Page<VMInformation>> findVms(VmFilterCriteria filters, Pageable pageable) {
+    public ResponseEntity<Page<VMInformation>> findVms(@ParameterObject VmFilterCriteria filters, @ParameterObject Pageable pageable) {
         Page<VmInfo> vmPage = vmService.findVmsByCriteria(filters, pageable);
         return ResponseEntity.ok(vmPage.map(this::convertToDto));
     }
