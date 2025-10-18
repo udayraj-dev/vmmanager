@@ -1,3 +1,220 @@
+d:\vmmanager\src\main\resources\vmmanager-ui\src\App.svelte
+
+<script>
+  import Router from "svelte-spa-router";
+  import routes from "./routes.js";
+  import { onMount } from "svelte";
+  import { push, location } from "svelte-spa-router";
+
+  onMount(() => {
+    push($location);
+  });
+</script>
+
+<div class="min-h-screen bg-gray-100">
+  <header class="bg-white shadow">
+    <div class="container mx-auto px-4 py-6 flex items-center justify-between">
+      <div class="flex items-center">
+        <img src="vmmanager.svg" alt="VM Manager Logo" class="h-8 w-8 mr-3" />
+        <h1 class="text-xl font-bold text-gray-800">VM Manager</h1>
+      </div>
+      <nav>
+        <a href="#/" class="text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+        <a href="#/add" class="text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md text-sm font-medium">Add VM</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <Router {routes} />
+  </main>
+</div>
+
+d:\vmmanager\src\main\resources\vmmanager-ui\src\routes.js
+
+import VMList from './components/VMList.svelte';
+import VMForm from './components/VMForm.svelte';
+import VMDetails from './components/VMDetails.svelte';
+import TestConnection from './components/TestConnection.svelte';
+
+export default {
+  '/': VMList,
+  '/add': VMForm,
+  '/details/:id': VMDetails,
+  '/test': TestConnection
+};
+
+d:\vmmanager\src\main\resources\vmmanager-ui\src\app.css
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+d:\vmmanager\src\main\resources\vmmanager-ui\src\main.js
+
+// @ts-nocheck
+
+import './app.css';
+import App from './App.svelte';
+
+const app = new App({
+  target: document.getElementById('app'),
+})
+
+d:\vmmanager\src\main\resources\vmmanager-ui\index.html
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="vmmanager.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual Machine Manager</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+
+d:\vmmanager\src\main\resources\vmmanager-ui\package.json
+
+{
+  "name": "vmmanager-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@tailwindcss/postcss": "^4.1.14",
+    "autoprefixer": "^10.4.21",
+    "postcss-nesting": "^13.0.2",
+    "svelte": "^5.39.12",
+    "tailwindcss": "^4.1.14",
+    "vite": "^7.1.9"
+  },
+  "dependencies": {
+    "svelte-spa-router": "^4.0.1"
+  }
+}
+
+d:\vmmanager\src\main\resources\vmmanager-ui\svelte.config.js
+
+
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+export default {
+  preprocess: vitePreprocess(),
+  compilerOptions: {
+    compatibility: {
+      componentApi: 4
+    }
+  }
+};
+
+d:\vmmanager\src\main\resources\vmmanager-ui\tailwind.config.js
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{svelte,js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+d:\vmmanager\src\main\resources\vmmanager-ui\src\components\VMList.svelte
+
+<script>
+    // @ts-nocheck
+    import { onMount } from 'svelte';
+    import { link } from 'svelte-spa-router';
+
+    let vms = {};
+    let error = null;
+    let loading = true;
+
+    onMount(async () => {
+        try {
+            const res = await fetch('/api/vms');
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message || 'Failed to fetch VMs');
+            }
+            vms = await res.json();
+        } catch (e) {
+            error = e.message;
+            console.error(e);
+        } finally {
+            loading = false;
+        }
+    });
+</script>
+
+<div class="container mx-auto p-8">
+    <h2 class="text-2xl font-bold mb-6">Virtual Machines</h2>
+
+    {#if loading}
+        <p>Loading...</p>
+    {:else if error}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <strong class="font-bold">Error:</strong>
+            <span class="block sm:inline">{error}</span>
+        </div>
+    {:else if vms.content.length === 0}
+        <p class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">Add some VMs to see them here.</p>
+    {:else}
+        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">OS</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="relative px-6 py-3">
+                            <span class="sr-only">Details</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {#each vms as vm}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{vm.hostName}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{vm.ipAddress}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{vm.osName}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{vm.ownerName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"> {vm.status} </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#/details/{vm.id}" use:link class="text-indigo-600 hover:text-indigo-900">Details</a>
+                            </td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    {/if}
+</div>
+
+d:\vmmanager\src\main\resources\vmmanager-ui\src\components\VMForm.svelte
+
 <script>
   import { push } from 'svelte-spa-router';
 

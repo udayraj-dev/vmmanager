@@ -27,7 +27,7 @@ import me.udayraj.vmmanager.model.VmInfo;
 import me.udayraj.vmmanager.service.VMService;
 
 @RestController
-@RequestMapping("/vms")
+@RequestMapping("/api/vms")
 @Tag(name = "VM Management", description = "APIs for managing and querying Virtual Machines")
 public class VMInfoController {
     private final VMService vmService;

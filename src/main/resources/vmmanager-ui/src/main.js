@@ -1,9 +1,8 @@
-import { mount } from 'svelte'
-import './app.css'
-import App from './App.svelte'
+// @ts-nocheck
 
-const app = mount(App, {
+import './app.css';
+import App from './App.svelte';
+
+const app = new App({
   target: document.getElementById('app'),
 })
-
-export default app

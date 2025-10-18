@@ -5,5 +5,7 @@ import TestConnection from './components/TestConnection.svelte';
 
 export default {
   '/': VMList,
-  '/add': VMForm
+  '/add': VMForm,
+  '/details/:id': VMDetails,
+  '/test': TestConnection
 };

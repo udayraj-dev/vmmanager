@@ -38,28 +38,36 @@ A Spring Boot application to manage, start, and stop your Virtual Machines.
     java -jar target/vmmanager-0.0.1-SNAPSHOT.war
     ```
 
-## API Documentation
+4. **Access the application:**
+
+    The web interface will be available at http://localhost:8080.
+
+## Web Interface
+
+The application includes a web interface for managing VMs. You can view, add, and see details for your virtual machines.
+
+## API
 
 API documentation is available through Swagger UI at:
 
 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-## API Endpoints
+### API Endpoints
 
-The base URL for all endpoints is `/vms`.
+The base URL for all API endpoints is `/api/vms`.
 
-| Method | Endpoint                | Description                                                                 |
-| :----- | :---------------------- | :-------------------------------------------------------------------------- |
-| `POST` | `/test-connection`      | Test SSH connection and retrieve VM details.                                |
-| `POST` | `/`                     | Save a new VM's information.                                                |
-| `PUT`  | `/{id}`                 | Update an existing VM.                                                      |
-| `DELETE`| `/{id}`                 | Soft-delete a VM.                                                           |
-| `GET`  | `/`                     | Find VMs by various filter criteria (e.g., status, owner).                  |
-| `GET`  | `/{id}`                 | Get a single VM by its ID.                                                  |
+| Method | Endpoint           | Description                                                |
+| :----- | :----------------- | :--------------------------------------------------------- |
+| `POST` | `/test-connection` | Test SSH connection and retrieve VM details.               |
+| `POST` | `/`                | Save a new VM's information.                               |
+| `PUT`  | `/{id}`            | Update an existing VM.                                     |
+| `DELETE`| `/{id}`            | Soft-delete a VM.                                          |
+| `GET`  | `/`                | Get a list of all VMs.                                     |
+| `GET`  | `/{id}`            | Get a single VM by its ID.                                 |
 
 ### Example: Test VM SSH Connection
 
-* **URL:** `/vms/test-connection`
+* **URL:** `/api/vms/test-connection`
 * **Method:** `POST`
 * **Request Body:**
 
