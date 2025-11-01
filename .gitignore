@@ -1,58 +1,49 @@
 HELP.md
+# Compiled class file
+*.class
+
+# Log files
+*.log
+
+# Build artifacts
 target/
+build/
+dist/
+nbdist/
+
+# Maven
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-HELP.md
-/target/
-/.mvn/wrapper/maven-wrapper.jar
-/.mvn/wrapper/maven-wrapper.properties
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
+.sts4-cache
+
+### Spring Tool Suite (STS) / Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+nbproject/private/
+nbbuild/
+.nb-gradle/
 
 ### VS Code ###
 .vscode/
+
+### Database files ###
 vmdb.mv.db
 vmmanager.db
 
-### node modules
+### Frontend ###
+# Node modules
 /src/main/frontend/node_modules/
+# Downloaded Node.js binary
 /src/main/frontend/node/
