@@ -4,12 +4,17 @@ A Spring Boot application to manage, start, and stop your Virtual Machines.
 
 ## Technologies Used
 
-* **Java:** 21
-* **Framework:** Spring Boot 3
-* **Build Tool:** Maven
-* **Database:** H2 (default), SQLite
-* **SSH:** JCraft (jsch)
-* **API Documentation:** SpringDoc OpenAPI (Swagger UI)
+* **Backend:**
+  * **Java:** 21
+  * **Framework:** Spring Boot 3
+  * **Build Tool:** Maven
+  * **Database:** H2 (default), SQLite
+  * **SSH:** JCraft (jsch)
+  * **API Documentation:** SpringDoc OpenAPI (Swagger UI)
+* **Frontend:**
+  * **JavaScript Framework:** React
+  * **Build Tool:** Vite
+  * **Styling:** Tailwind CSS
 
 ## Getting Started
 
@@ -17,6 +22,7 @@ A Spring Boot application to manage, start, and stop your Virtual Machines.
 
 * Java 21
 * Maven
+* Node.js and npm (for frontend development)
 
 ### Installation
 
@@ -27,6 +33,8 @@ A Spring Boot application to manage, start, and stop your Virtual Machines.
     ```
 
 2. **Build the project:**
+
+    The project is configured to build the frontend and include it in the final `.war` file.
 
     ```bash
     mvn clean install
@@ -40,11 +48,35 @@ A Spring Boot application to manage, start, and stop your Virtual Machines.
 
 4. **Access the application:**
 
-    The web interface will be available at http://localhost:8080.
+    The web interface will be available at [http://localhost:8080](http://localhost:8080).
 
 ## Web Interface
 
-The application includes a web interface for managing VMs. You can view, add, and see details for your virtual machines.
+The application includes a web interface built with React and Tailwind CSS for managing VMs. You can view, add, and see details for your virtual machines.
+
+### Frontend Development
+
+If you want to work on the frontend independently, you can run the Vite development server:
+
+1. **Navigate to the frontend directory:**
+
+    ```bash
+    cd src/main/frontend
+    ```
+
+2. **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3. **Start the development server:**
+
+    ```bash
+    npm run dev
+    ```
+
+This will start the frontend on a different port (usually `http://localhost:5173`), and it will proxy API requests to the Spring Boot backend running on `http://localhost:8080`.
 
 ## API
 
@@ -87,7 +119,7 @@ This application uses a file-based database. You can switch between H2 and SQLit
 * **H2 (default):** No configuration needed. The database is stored in memory.
 * **SQLite:** To use SQLite, set the following Spring profile:
 
-    ```
+    ```properties
     spring.profiles.active=sqlite
     ```
 
